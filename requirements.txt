@@ -1,0 +1,3 @@
+PrettyTable
+apcaccess
+paho-mqtt
