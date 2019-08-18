@@ -1,7 +1,12 @@
 FROM python:3-alpine
 MAINTAINER Brandon <hey@bgulla.dev>
 
-RUN pip install apcaccess paho-mqtt PrettyTable
-COPY ./apcupsd-mqtt.py /apcupsd-mqtt.py
+USER root
+COPY ./src /src
+RUN pip install -r /src/requirements.txt \
+    && chown -R 1001:1001 /src
 
-CMD ["python", "/apcupsd-influxdb-exporter.py"]
+USER 1001
+WORKDIR ["/src"]
+
+CMD ["python", "/src/apcupsd-mqtt.py"]

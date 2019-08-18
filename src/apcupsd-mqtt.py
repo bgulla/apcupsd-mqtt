@@ -59,10 +59,10 @@ def main():
     MQTT_TOPIC_PREFIX = MQTT_TOPIC_PREFIX + "/" + UPS_ALIAS + "/"
     while True:
 #        watts = float(os.getenv('WATTS', ups.get('NOMPOWER', 0.0))) * 0.01 * float(ups.get('LOADPCT', 0.0))
-#        pub_mqtt( MQTT_TOPIC_PREFIX + 'WATTS', str(watts) )
+        pub_mqtt( MQTT_TOPIC_PREFIX + 'WATTS', str(watts) )
         ups_data = apc.parse(apc.get(host=APCUPSD_HOST), strip_units=True)
         for k in ups_data:
-            pub_mqtt( k, str(ups_data[k])) )
+            pub_mqtt( k, str(ups_data[k]) )
         time.sleep(INTERVAL)
 
 
