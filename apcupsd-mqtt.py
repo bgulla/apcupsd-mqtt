@@ -19,7 +19,7 @@ MQTT_USER = os.getenv('MQTT_USER')
 MQTT_PASSWORD = os.getenv('MQTT_PASSWORD')
 MQTT_PORT = os.getenv('MQTT_PORT', 31353)
 MQTT_HOST = os.getenv('MQTT_HOST', 'texas.lol')
-INTERVAL = float(os.getenv('INTERVAL', 5))
+INTERVAL = float(os.getenv('INTERVAL', 15))
 UPS_ALIAS = os.getenv('UPS_ALIAS','none')
 APCUPSD_HOST = os.getenv('APCUPSD_HOST','127.0.0.1')
 
@@ -57,19 +57,12 @@ def main():
     ups = apc.parse(apc.get(host=APCUPSD_HOST))
     HOSTNAME = ups.get('HOSTNAME', 'apcupsd-mqtt')
     MQTT_TOPIC_PREFIX = MQTT_TOPIC_PREFIX + "/" + UPS_ALIAS + "/"
-    while True:   
-        watts = float(os.getenv('WATTS', ups.get('NOMPOWER', 0.0))) * 0.01 * float(ups.get('LOADPCT', 0.0))
-        pub_mqtt( MQTT_TOPIC_PREFIX + 'WATTS', str(watts) )
-        pub_mqtt( MQTT_TOPIC_PREFIX + 'STATUS', ups.get('STATUS'))
-        pub_mqtt( MQTT_TOPIC_PREFIX + 'LOADPCT', (ups.get('LOADPCT', 0.0)))
-        pub_mqtt( MQTT_TOPIC_PREFIX + 'BCHARGE', (ups.get('BCHARGE', 0.0)))
-        pub_mqtt( MQTT_TOPIC_PREFIX + 'TONBATT', (ups.get('TONBATT', 0.0)))
-        pub_mqtt( MQTT_TOPIC_PREFIX + 'TIMELEFT', (ups.get('TIMELEFT', 0.0)))
-        pub_mqtt( MQTT_TOPIC_PREFIX + 'NOMPOWER', (ups.get('NOMPOWER', 0.0)))
-        pub_mqtt( MQTT_TOPIC_PREFIX + 'CUMONBATT', (ups.get('CUMONBATT', 0.0)))
-        pub_mqtt( MQTT_TOPIC_PREFIX + 'BATTV', (ups.get('BATTV', 0.0)))
-        pub_mqtt( MQTT_TOPIC_PREFIX + 'OUTPUTV', (ups.get('OUTPUTV', 0.0)))
-        pub_mqtt( MQTT_TOPIC_PREFIX + 'ITEMP', (ups.get('ITEMP', 0.0)))
+    while True:
+#        watts = float(os.getenv('WATTS', ups.get('NOMPOWER', 0.0))) * 0.01 * float(ups.get('LOADPCT', 0.0))
+#        pub_mqtt( MQTT_TOPIC_PREFIX + 'WATTS', str(watts) )
+        ups_data = apc.parse(apc.get(host=APCUPSD_HOST), strip_units=True)
+        for k in ups_data:
+            pub_mqtt( k, str(ups_data[k])) )
         time.sleep(INTERVAL)
 
 
