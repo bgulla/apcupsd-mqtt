@@ -1,3 +1,4 @@
 PrettyTable
 apcaccess
 paho-mqtt
+pyfiglet
